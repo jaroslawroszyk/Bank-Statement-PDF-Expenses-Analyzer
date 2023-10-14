@@ -10,6 +10,11 @@ def save_to_json(json_data):
         jsonFile.write(json_out)
         jsonFile.close()
 
+def sum_values_json(json_data):
+    sum_values = sum(float(item["Kwota"].replace(',', '.').replace(' ', '')) for item in json_data)
+    sumRounder = format(sum_values, ".2f")
+    return sumRounder
+
 def extract_table_data(pdf_file):
     try:
         tables = tabula.read_pdf(pdf_file, pages='all')
@@ -23,9 +28,8 @@ def extract_table_data(pdf_file):
                         continue
                     json_data.append({"Kwota" : value})
         save_to_json(json_data)
-        sum_values = sum(float(item["Kwota"].replace(',', '.').replace(' ', '')) for item in json_data)
-        sumRounder = format(sum_values, ".2f")
-        print(sumRounder)
+        sum = sum_values_json(json_data)
+        print(sum)
 
     except Exception as e:
         print(f"Błąd podczas ekstrakcji danych: {e}")
