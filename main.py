@@ -19,8 +19,13 @@ def extract_table_data(pdf_file):
     try:
         tables = tabula.read_pdf(pdf_file, pages='all')
         json_data = []
+        skip_table = False
 
         for table in tables:
+            if "Podsumowanie obrotów na rachunku" in table.columns and "Liczba operacji"  in table.columns and "Wartość operacji"  in table.columns:
+                skip_table = True
+                continue
+
             if "Kwota" in table.columns:
                 amount_column = table["Kwota"]
                 for value in amount_column:
@@ -29,7 +34,7 @@ def extract_table_data(pdf_file):
                     json_data.append({"Kwota" : value})
         save_to_json(json_data)
         sum = sum_values_json(json_data)
-        print(sum)
+        print("Sum is: ", sum)
 
     except Exception as e:
         print(f"Błąd podczas ekstrakcji danych: {e}")
